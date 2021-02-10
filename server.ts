@@ -1,6 +1,7 @@
 import express from "express";
-import userRouter from "./routers/userRouter";
-import authRouter from "./routers/authRouter";
+import userRouter from "./src/routers/userRouter";
+import authRouter from "./src/routers/authRouter";
+import postRouter from "./src/routers/postRouter";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import morgan from "morgan";
@@ -21,6 +22,7 @@ app.use(bodyParser.json());
 app.use(morgan("dev"));
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/posts", postRouter);
 app.use("/", () => "hello");
 app.listen(PORT, () =>
   console.log(`⚡Server is running here 👉 http://localhost:${PORT}`)
