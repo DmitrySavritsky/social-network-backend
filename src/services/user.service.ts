@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
-import UserSchema, {IUserDoc} from "../models/user.model";
+import UserSchema, { IUserDoc } from "../models/user.model";
+import { Types } from "mongoose";
 import { IUser } from "../models/types";
 import jwt from "jsonwebtoken";
 
@@ -21,6 +22,10 @@ class UserService {
 
   async findUser(login: string): Promise<IUserDoc> {
     return await UserSchema.findOne({ login: login });
+  }
+
+  async findUserById(id: Types.ObjectId): Promise<IUserDoc> {
+    return await UserSchema.findOne({ _id: id });
   }
 
   async userExists(login: string) {
@@ -61,6 +66,19 @@ class UserService {
       throw new Error("Duplicate login!");
     }
     return await this.addUser(newUser);
+  }
+
+  async getCurrentUserInfo(userId: Types.ObjectId) {
+    const user = await this.findUserById(userId);
+    if (user === null) {
+      throw new Error("Current user does not exist!");
+    }
+    return {
+      login: user.login,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      id: user._id,
+    };
   }
 }
 
