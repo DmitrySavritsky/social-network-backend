@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import PostService from "../services/post.service";
-import { IPost, LikeData} from "../models/types";
+import { IPost, LikeData } from "../models/types";
 import { Types } from "mongoose";
 
 class PostController {

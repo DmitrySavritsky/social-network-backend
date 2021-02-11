@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import UserSchema, { IUserDoc } from "../models/user.model";
 import { Types } from "mongoose";
-import { IUser } from "../models/types";
+import { IUser, UserNameData } from "../models/types";
 import jwt from "jsonwebtoken";
 
 async function createHash(password: string) {
@@ -47,9 +47,7 @@ class UserService {
     if (user === null) {
       throw new Error("User not found in db!");
     }
-
     const isMatch = await checkPassword(password, user.password as string);
-
     if (!isMatch) {
       throw new Error("Password mismatch!");
     } else {
@@ -79,6 +77,20 @@ class UserService {
       lastName: user.lastName,
       id: user._id,
     };
+  }
+
+  async changeCurrentUserName(userData: UserNameData, userId: Types.ObjectId) {
+    const user = await this.findUserById(userId);
+    if (user === null) {
+      throw new Error("Current user does not exist!");
+    }
+    if (checkPassword(userData.password, user.password as string)) {
+      await UserSchema.updateOne(
+        { _id: userId },
+        { firstName: userData.firstName, lastName: userData.lastName }
+      );
+      return "User name is changed!";
+    } else throw new Error("Password is incorrect!");
   }
 }
 

@@ -5,5 +5,6 @@ import userController from "../controllers/userController";
 const userRouter = express.Router();
 
 userRouter.get("/currentUser", auth, userController.getCurrentUserInfo);
+userRouter.post("/currentUser", auth, userController.changeCurrentUserName);
 
 export default userRouter;

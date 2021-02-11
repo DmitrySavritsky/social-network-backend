@@ -52,7 +52,13 @@ export interface LikeData {
   postId: Types.ObjectId;
 }
 
-export interface TokenInterface {
+export interface TokenData {
   id: Types.ObjectId;
   login: string;
+}
+
+export interface UserNameData {
+  firstName: string;
+  lastName: string;
+  password: string;
 }
