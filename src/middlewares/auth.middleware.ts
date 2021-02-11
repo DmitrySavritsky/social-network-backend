@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { IUser, TokenInterface } from "../models/types";
+import { IUser, TokenData } from "../models/types";
 import UserSchema from "../models/user.model";
 import { Request, Response, NextFunction } from "express";
 
@@ -16,9 +16,9 @@ const auth = async function (req: Request, res: Response, next: NextFunction) {
     if (req?.headers?.authorization !== undefined) {
       const [strategy, token] = req.headers.authorization.split(" ");
       const result = jwt.verify(token, "veryStrongSecretKey");
-      const login = (result as TokenInterface).login;
+      const login = (result as TokenData).login;
       req.login = login;
-      req.id = (result as TokenInterface).id;
+      req.id = (result as TokenData).id;
 
       const isExists = await isUserExists(login, req);
       if (!isExists) {
