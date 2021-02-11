@@ -8,7 +8,7 @@ class AuthController {
       const data = req.body as LoginData;
       res.send({token: await UserService.login(data.login, data.password)}).status(202);
     } catch (err) {
-      res.status(err.status).send(err.message);
+      res.status(500).send(err.message);
     }
   }
   async signUp(req: express.Request, res: express.Response) {
@@ -16,7 +16,7 @@ class AuthController {
       const signUpData = req.body as IUser;
       res.status(202).send(await UserService.signUp(signUpData));
     } catch (err) {
-      res.send(err.message).status(500);
+      res.status(500).send(err.message);
     }
   }
 }
