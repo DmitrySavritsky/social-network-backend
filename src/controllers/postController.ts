@@ -16,7 +16,7 @@ class PostController {
     try {
       if (req.id === undefined) throw new Error("No id present!");
       const post: IPost = {
-        ownerId: req.id,
+        owner: req.id,
         message: req.body.message,
         date: new Date(),
         comments: [],

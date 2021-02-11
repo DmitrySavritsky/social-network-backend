@@ -2,8 +2,9 @@ import { model, Schema, Document } from "mongoose";
 import { IPost } from "./types";
 
 const postSchema: Schema = new Schema({
-  ownerId: {
-    type: String,
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
     required: true,
   },
   message: {

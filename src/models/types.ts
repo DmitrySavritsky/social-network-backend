@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 
 export interface IPost {
-  ownerId: Types.ObjectId;
+  owner: Types.ObjectId;
   message: String;
   date: Date;
   comments: Array<Types.ObjectId>;

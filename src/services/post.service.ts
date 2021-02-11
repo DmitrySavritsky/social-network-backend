@@ -10,8 +10,7 @@ class PostService {
   }
 
   async getPostsByOwnerId(id: Types.ObjectId | undefined) {
-    const posts = await PostSchema.find({ ownerId: id });
-    return posts;
+    return await PostSchema.find({ owner: id }).populate("owner");
   }
 
   async findPost(postId: Types.ObjectId) {
