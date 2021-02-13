@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import {Types } from "mongoose";
 
 export interface IPost {
   owner: Types.ObjectId;
@@ -37,6 +37,11 @@ export interface IComment {
   ownerId: Types.ObjectId;
   message: String;
   date: Date;
+}
+
+export interface IFriendRequest {
+  fromId: Types.ObjectId;
+  toId: Types.ObjectId;
 }
 
 export interface LoginData {

@@ -3,6 +3,7 @@ import UserSchema, { IUserDoc } from "../models/user.model";
 import { Types } from "mongoose";
 import { IUser, UserNameData } from "../models/types";
 import jwt from "jsonwebtoken";
+import FriendRequestService from "./friendRequest.service";
 
 async function createHash(password: string) {
   const saltRounds = 10;
@@ -91,6 +92,24 @@ class UserService {
       );
       return "User name is changed!";
     } else throw new Error("Password is incorrect!");
+  }
+
+  async getUsersList(userId: Types.ObjectId) {
+    const users: Array<any> = await UserSchema.find({ _id: { $ne: userId } });
+    if (users === null) {
+      throw new Error("Current user does not exist!");
+    }
+
+    const usersArray = users.map( async (element) => {
+      return {
+        _id : element._id,
+        firstName : element.firstName,
+        lastName : element.lastName,
+        login: element.login,
+        isAlreadySendedRequest: await FriendRequestService.containsFriendRequest(userId, element._id),
+      }
+    });
+    return Promise.all(usersArray);
   }
 }
 

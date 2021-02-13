@@ -2,6 +2,7 @@ import express from "express";
 import userRouter from "./src/routers/userRouter";
 import authRouter from "./src/routers/authRouter";
 import postRouter from "./src/routers/postRouter";
+import friendRequestRouter from "./src/routers/friendRequestRouter";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import morgan from "morgan";
@@ -23,6 +24,7 @@ app.use(morgan("dev"));
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/posts", postRouter);
+app.use("/api/friendRequests", friendRequestRouter)
 app.use("/", () => "hello");
 app.listen(PORT, () =>
   console.log(`⚡Server is running here 👉 http://localhost:${PORT}`)

@@ -30,7 +30,13 @@ const userSchema: Schema = new Schema({
       ref: "User",
     },
   ],
-  friendRequests: [
+  friendRequestsFrom: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  friendRequestsTo: [
     {
       type: Schema.Types.ObjectId,
       ref: "User",
