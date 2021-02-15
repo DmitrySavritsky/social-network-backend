@@ -30,18 +30,6 @@ const userSchema: Schema = new Schema({
       ref: "User",
     },
   ],
-  friendRequestsFrom: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-    },
-  ],
-  friendRequestsTo: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-    },
-  ],
 });
 
 export interface IUserDoc extends IUser, Document {}
