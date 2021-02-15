@@ -34,6 +34,11 @@ class UserService {
     return user !== null;
   }
 
+  async userIdExists(id: Types.ObjectId) {
+    const user = await UserSchema.findOne({ _id: id });
+    return user !== null;
+  }
+
   async addUser(user: IUser): Promise<string> {
     const addedUser = new UserSchema({
       ...user,
@@ -95,21 +100,53 @@ class UserService {
   }
 
   async getUsersList(userId: Types.ObjectId) {
-    const users: Array<any> = await UserSchema.find({ _id: { $ne: userId } });
-    if (users === null) {
-      throw new Error("Current user does not exist!");
-    }
+    const mainUser = await this.findUserById(userId);
+    const friends = mainUser.friends;
+    friends.push(userId);
 
-    const usersArray = users.map( async (element) => {
+    const users: Array<any> = await UserSchema.find({ _id: { $nin: friends } });
+
+    const usersArray = users.map(async (element) => {
       return {
-        _id : element._id,
-        firstName : element.firstName,
-        lastName : element.lastName,
+        _id: element._id,
+        firstName: element.firstName,
+        lastName: element.lastName,
         login: element.login,
-        isAlreadySendedRequest: await FriendRequestService.containsFriendRequest(userId, element._id),
-      }
+        isAlreadySendedRequest: await FriendRequestService.containsFriendRequest(
+          userId,
+          element._id
+        ),
+      };
     });
     return Promise.all(usersArray);
+  }
+
+  async addFriendById(ownerId: Types.ObjectId, friendId: Types.ObjectId) {
+    if (this.userIdExists(ownerId) && this.userIdExists(friendId)) {
+      const owner: IUserDoc = await UserSchema.findOne({ _id: ownerId });
+      const friend: IUserDoc = await UserSchema.findOne({ _id: friendId });
+      if (!owner.friends.includes(friendId)) {
+        owner.friends.push(friendId);
+        owner.save();
+      }
+      if (!friend.friends.includes(ownerId)) {
+        friend.friends.push(ownerId);
+        friend.save();
+      }
+    } else throw new Error("User does not exist!");
+  }
+
+  async getFriendsList(userId: Types.ObjectId) {
+    const user = await UserSchema.findOne({ _id: userId }).populate("friends");
+    const friendsArray = user.friends.map(async (element: any) => {
+      return {
+        _id: element._id,
+        firstName: element.firstName,
+        lastName: element.lastName,
+        login: element.login,
+      };
+    });
+    return Promise.all(friendsArray);
   }
 }
 
