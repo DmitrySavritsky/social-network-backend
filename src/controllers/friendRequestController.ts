@@ -31,6 +31,36 @@ class FriendRequestController {
       res.status(500).send(err.message);
     }
   }
+
+  async acceptFriendRequest(req: express.Request, res: express.Response) {
+    try {
+      if (req.id !== undefined) {
+        const friendId = req.body.friendId;
+        res
+          .send(
+            await friendRequestService.acceptFriendRequest(req.id, friendId)
+          )
+          .status(202);
+      } else throw new Error("No id in request!");
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  }
+
+  async declineFriendRequest(req: express.Request, res: express.Response) {
+    try {
+      if (req.id !== undefined) {
+        const friendId = req.body.friendId;
+        res
+          .send(
+            await friendRequestService.declineFriendRequest(req.id, friendId)
+          )
+          .status(202);
+      } else throw new Error("No id in request!");
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  }
 }
 
 export default new FriendRequestController();
