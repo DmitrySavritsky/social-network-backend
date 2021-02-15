@@ -4,6 +4,7 @@ import { Types } from "mongoose";
 import { IUser, UserNameData } from "../models/types";
 import jwt from "jsonwebtoken";
 import FriendRequestService from "./friendRequest.service";
+import friendRequestService from "./friendRequest.service";
 
 async function createHash(password: string) {
   const saltRounds = 10;
@@ -101,8 +102,15 @@ class UserService {
 
   async getUsersList(userId: Types.ObjectId) {
     const mainUser = await this.findUserById(userId);
-    const friends = mainUser.friends;
+    let friends = mainUser.friends;
+    let friendRequestsToId = await friendRequestService.getFriendRequestsToId(
+      userId
+    );
+    friendRequestsToId = friendRequestsToId.map((element: any) => {
+      return element.fromId;
+    });
     friends.push(userId);
+    friends = friends.concat(friendRequestsToId);
 
     const users: Array<any> = await UserSchema.find({ _id: { $nin: friends } });
 

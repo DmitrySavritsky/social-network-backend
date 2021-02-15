@@ -20,7 +20,9 @@ class FriendRequestService {
   }
 
   async addFriendRequest(friendRequest: IFriendRequest) {
-    if(await this.containsFriendRequest(friendRequest.toId, friendRequest.fromId)){
+    if (
+      await this.containsFriendRequest(friendRequest.toId, friendRequest.fromId)
+    ) {
       this.acceptFriendRequest(friendRequest.toId, friendRequest.fromId);
       return "Added friend!";
     }
@@ -47,14 +49,30 @@ class FriendRequestService {
     return Promise.all(friendRequestsArray);
   }
 
+  async getFriendRequestsToId(toId: Types.ObjectId) {
+    const friendRequests = await FriendRequestSchema.find({
+      toId: toId,
+    });
+    return friendRequests;
+  }
+
   async acceptFriendRequest(ownerId: Types.ObjectId, friendId: Types.ObjectId) {
-    await FriendRequestSchema.findOneAndDelete({fromId: friendId, toId: ownerId});
+    await FriendRequestSchema.findOneAndDelete({
+      fromId: friendId,
+      toId: ownerId,
+    });
     await userService.addFriendById(ownerId, friendId);
     return "Friend request was accepted!";
   }
 
-  async declineFriendRequest(ownerId: Types.ObjectId, friendId: Types.ObjectId) {
-    await FriendRequestSchema.findOneAndDelete({fromId: friendId, toId: ownerId});
+  async declineFriendRequest(
+    ownerId: Types.ObjectId,
+    friendId: Types.ObjectId
+  ) {
+    await FriendRequestSchema.findOneAndDelete({
+      fromId: friendId,
+      toId: ownerId,
+    });
     return "Friend request was declined!";
   }
 }
