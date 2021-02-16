@@ -8,7 +8,6 @@ class PostController {
     try {
       res.send(await PostService.getPostsByOwnerId(req.id)).status(202);
     } catch (err) {
-      console.log(err.message);
       res.status(500).send(err.message);
     }
   }
@@ -24,7 +23,6 @@ class PostController {
       };
       res.send(await PostService.addPost(post)).status(202);
     } catch (err) {
-      console.log(err.message);
       res.status(500).send(err.message);
     }
   }
@@ -44,7 +42,6 @@ class PostController {
       const postId = Types.ObjectId(req.params.id as string);
       res.send(await PostService.deletePost(postId)).status(202);
     } catch (err) {
-      console.log(err.message);
       res.status(500).send(err.message);
     }
   }
@@ -54,7 +51,15 @@ class PostController {
       const likeData = req.body as LikeData;
       res.send(await PostService.likePost(likeData.postId, req.id)).status(202);
     } catch (err) {
-      console.log(err.message);
+      res.status(500).send(err.message);
+    }
+  }
+
+  async getFriendsPosts(req: Request, res: Response) {
+    try {
+      if (req.id === undefined) throw new Error("No id present!");
+      res.send(await PostService.getFriendsPosts(req.id)).status(202);
+    } catch (err) {
       res.status(500).send(err.message);
     }
   }

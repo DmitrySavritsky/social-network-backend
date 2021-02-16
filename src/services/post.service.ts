@@ -1,6 +1,7 @@
 import PostSchema, { IPostDoc } from "../models/post.model";
 import { IPost } from "../models/types";
 import { Types } from "mongoose";
+import userService from "./user.service";
 
 class PostService {
   constructor() {}
@@ -10,7 +11,7 @@ class PostService {
   }
 
   async getPostsByOwnerId(id: Types.ObjectId | undefined) {
-    return await PostSchema.find({ owner: id }).populate("owner");
+    return await PostSchema.find({ owner: id }).sort("-date").populate("owner");
   }
 
   async findPost(postId: Types.ObjectId) {
@@ -54,6 +55,13 @@ class PostService {
     }
     await post.save();
     return "Like changed successfully!";
+  }
+
+  async getFriendsPosts(userId: Types.ObjectId){
+    const user = await userService.findUserById(userId);
+    const friends = user.friends;
+    const posts: Array<IPostDoc> = await PostSchema.find({ owner: { $in: friends } }).sort("-date").populate("owner");
+    return posts;
   }
 }
 
