@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import morgan from "morgan";
 import cors from "cors";
+import commentRouter from "./src/routers/commentRouter";
 
 const app = express();
 const PORT = 4000;
@@ -24,8 +25,8 @@ app.use(morgan("dev"));
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/posts", postRouter);
-app.use("/api/friendRequests", friendRequestRouter)
-app.use("/", () => "hello");
+app.use("/api/friendRequests", friendRequestRouter);
+app.use("/api/comments",commentRouter);
 app.listen(PORT, () =>
   console.log(`⚡Server is running here 👉 http://localhost:${PORT}`)
 );

@@ -63,6 +63,16 @@ class PostController {
       res.status(500).send(err.message);
     }
   }
+
+  async getCurrentPost(req: Request, res: Response) {
+    try {
+      if (req.params.id === undefined) throw new Error("No id in query!");
+      const postId = Types.ObjectId(req.params.id as string);
+      res.send(await PostService.getCurrentPostById(postId)).status(202);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  }
 }
 
 export default new PostController();

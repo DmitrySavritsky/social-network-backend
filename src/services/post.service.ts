@@ -2,16 +2,37 @@ import PostSchema, { IPostDoc } from "../models/post.model";
 import { IPost } from "../models/types";
 import { Types } from "mongoose";
 import userService from "./user.service";
+import commentService from "./comment.service";
 
 class PostService {
   constructor() {}
 
   async getPostById(id: string) {
-    return await PostSchema.find({ _id: id });
+    return await PostSchema.findOne({ _id: id });
   }
 
   async getPostsByOwnerId(id: Types.ObjectId | undefined) {
-    return await PostSchema.find({ owner: id }).sort("-date").populate("owner");
+    const posts: Array<IPostDoc> = await PostSchema.find({ owner: id })
+      .sort("-date")
+      .populate("owner");
+    const postsArray = posts.map(async (element: any) => {
+      return {
+        _id: element._id,
+        owner: {
+          firstName: element.owner.firstName,
+          lastName: element.owner.lastName,
+          login: element.owner.login,
+          _id: element.owner._id,
+        },
+        date: element.date,
+        message: element.message,
+        likes: element.likes,
+        commentsCount: await commentService.getCommentsCountByPostId(
+          element._id
+        ),
+      };
+    });
+    return Promise.all(postsArray);
   }
 
   async findPost(postId: Types.ObjectId) {
@@ -57,11 +78,53 @@ class PostService {
     return "Like changed successfully!";
   }
 
-  async getFriendsPosts(userId: Types.ObjectId){
+  async getFriendsPosts(userId: Types.ObjectId) {
     const user = await userService.findUserById(userId);
     const friends = user.friends;
-    const posts: Array<IPostDoc> = await PostSchema.find({ owner: { $in: friends } }).sort("-date").populate("owner");
-    return posts;
+    const posts: Array<IPostDoc> = await PostSchema.find({
+      owner: { $in: friends },
+    })
+      .sort("-date")
+      .populate("owner");
+
+    const postsArray = posts.map(async (element: any) => {
+      return {
+        _id: element._id,
+        owner: {
+          firstName: element.owner.firstName,
+          lastName: element.owner.lastName,
+          login: element.owner.login,
+          _id: element.owner._id,
+        },
+        date: element.date,
+        message: element.message,
+        likes: element.likes,
+        commentsCount: await commentService.getCommentsCountByPostId(
+          element._id
+        ),
+      };
+    });
+    return Promise.all(postsArray);
+  }
+
+  async getCurrentPostById(postId: Types.ObjectId) {
+    const currentPost = await PostSchema.findOne({ _id: postId }).populate(
+      "owner"
+    );
+
+    return {
+      _id: currentPost._id,
+      owner: {
+        firstName: currentPost.owner.firstName,
+        lastName: currentPost.owner.lastName,
+        login: currentPost.owner.login,
+        _id: currentPost.owner._id,
+      },
+      date: currentPost.date,
+      message: currentPost.message,
+      likes: currentPost.likes,
+      commentsCount: await commentService.getCommentsCountByPostId(postId),
+    };
   }
 }
 

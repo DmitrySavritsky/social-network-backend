@@ -2,13 +2,13 @@ import { model, Schema, Document } from "mongoose";
 import { IComment } from "./types";
 
 const commentSchema: Schema = new Schema({
-  postId: {
-    type: String,
-    required: true,
+  post: {
+    type: Schema.Types.ObjectId,
+    ref: "Post",
   },
-  ownerId: {
-    type: String,
-    required: true,
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
   },
   message: {
     type: String,
